@@ -1,0 +1,36 @@
+{
+    "query": {
+        "filter": {
+            "OR": [
+                {
+                    "EQ": {
+                        "value.person.org": "Dev Ops"
+                    }
+                },
+                {
+                    "AND": [
+                        {
+                            "EQ": {
+                                "value.person.org": "Hardware"
+                            }
+                        },
+                        {
+                            "IN": {
+                                "value.state": ["CA", "WA"]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "sort": [
+            {
+                "key": "value.state",
+                "order": "DESC"
+            },
+            {
+                "key": "value.person.name"
+            }
+        ]
+    }
+}

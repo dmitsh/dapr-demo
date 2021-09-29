@@ -1,0 +1,16 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: cosmostore
+spec:
+  type: state.azure.cosmosdb
+  version: v1
+  metadata:
+  - name: url
+    value: https://<ACCOUNT>.documents.azure.com:443/
+  - name: masterKey
+    value: <KEY>
+  - name: database
+    value: <DB>
+  - name: collection
+    value: <CONTAINER>

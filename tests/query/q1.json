@@ -1,0 +1,7 @@
+{
+    "query": {
+        "pagination": {
+            "limit": 5
+        }
+    }
+}

@@ -17,12 +17,12 @@ echo "Checking kubectl"
 which kubectl
 
 echo "Deploying rabbitmq cluster operator"
-#kubectl apply -f https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml
+kubectl apply -f https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml
 POD=$(kubectl -n rabbitmq-system get pod -l app.kubernetes.io/component=rabbitmq-operator -o jsonpath={.items..metadata.name})
 kubectl wait -n rabbitmq-system --for=condition=Ready pod/$POD
 
 echo "Deploying rabbitmq cluster"
-#kubectl apply -f ../deployments/pubsub/rabbitmq-cluster.yml
+kubectl apply -f ../deployments/pubsub/rabbitmq-cluster.yml
 kubectl wait --for=condition=Ready pod/dapr-demo-server-0
 
 echo "Deploying Dapr rabbitmq pubsub component"
