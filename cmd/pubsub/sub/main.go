@@ -2,11 +2,9 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"os/signal"
 	"strings"
 	"syscall"
 
@@ -47,6 +45,10 @@ var (
 )
 
 func main() {
+	log.Printf("Starting subscriber on DAPR_GRPC_PORT %s", os.Getenv("DAPR_GRPC_PORT"))
+
+	ctx := context.Background()
+
 	s := daprd.NewService(":8080")
 
 	if err := s.AddTopicEventHandler(subRed, eventHandler); err != nil {
@@ -59,32 +61,15 @@ func main() {
 
 	var g run.Group
 	{
-		// Termination handler.
-		term := make(chan os.Signal, 1)
-		signal.Notify(term, os.Interrupt, syscall.SIGTERM)
-		cancel := make(chan struct{})
-		g.Add(
-			func() error {
-				select {
-				case <-term:
-					fmt.Println("Received SIGTERM, exiting gracefully...")
-				case <-cancel:
-					fmt.Println("Canceled")
-				}
-				return nil
-			},
-			func(err error) {
-				fmt.Println("Stopping term")
-				close(cancel)
-			},
-		)
+		// Signal handler
+		g.Add(run.SignalHandler(ctx, os.Interrupt, syscall.SIGTERM))
 		// Application service
 		g.Add(
 			func() error {
 				return s.Start()
 			},
 			func(err error) {
-				fmt.Println("Stopping application service")
+				log.Printf("Stopping application service")
 				s.Stop()
 			},
 		)
@@ -95,13 +80,13 @@ func main() {
 				return http.ListenAndServe(":8181", nil)
 			},
 			func(err error) {
-				fmt.Println("Stopping Prometheus")
+				log.Printf("Stopping Prometheus")
 			},
 		)
 	}
 
 	if err := g.Run(); err != nil {
-		fmt.Printf("ERROR: %v\n", err)
+		log.Fatalf("ERROR: %v", err)
 	}
 }
 

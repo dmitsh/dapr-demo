@@ -124,7 +124,7 @@ func run(client dapr.Client, port, store, op, param string) error {
 			fmt.Println("KEY:", item.Key)
 			fmt.Println(val)
 		}
-		fmt.Println("Token:", qr.Token)
+		fmt.Printf("Token: %q\n", qr.Token)
 
 	default:
 		return fmt.Errorf("unsupported operation %q", op)
