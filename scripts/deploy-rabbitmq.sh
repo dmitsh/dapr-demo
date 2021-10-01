@@ -27,10 +27,9 @@ kubectl wait --for=condition=Ready pod/dapr-demo-server-0
 
 echo "Deploying Dapr rabbitmq pubsub component"
 
-USER=$(kubectl get secret dapr-demo-default-user -o jsonpath="{.data.username}" | base64 --decode)
-PASSWORD=$(kubectl get secret dapr-demo-default-user -o jsonpath="{.data.password}" | base64 --decode)
-
-cat ../deployments/pubsub/dapr-pubsub-rabbitmq.yml.templ | sed "s/<USERNAME>/${USER}/g" | sed "s/<PASSWORD>/${PASSWORD}/g" | cat > ../deployments/pubsub/dapr-pubsub-rabbitmq.yml
+#USER=$(kubectl get secret dapr-demo-default-user -o jsonpath="{.data.username}" | base64 --decode)
+#PASSWORD=$(kubectl get secret dapr-demo-default-user -o jsonpath="{.data.password}" | base64 --decode)
+#cat ../deployments/pubsub/dapr-pubsub-rabbitmq.yml.templ | sed "s/<USERNAME>/${USER}/g" | sed "s/<PASSWORD>/${PASSWORD}/g" | cat > ../deployments/pubsub/dapr-pubsub-rabbitmq.yml
 
 kubectl apply -f ../deployments/pubsub/dapr-pubsub-rabbitmq.yml
 

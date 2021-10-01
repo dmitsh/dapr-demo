@@ -1,5 +1,4 @@
 /bin
 /vendor
-/deployments/pubsub/dapr-pubsub-rabbitmq.yml
 /tests/query/cfg/cosmosdb.yml
 

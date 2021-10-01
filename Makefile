@@ -1,7 +1,7 @@
 #SRCS := $(wildcard cmd/*/*.go)
 #PRGS := $(notdir $(patsubst %.go,%,$(SRCS)))
 #BINS := $(addprefix bin/,$(PRGS))
-DIRS := cmd/pubsub/pub cmd/pubsub/sub cmd/statestore
+DIRS := cmd/pubsub/pub cmd/pubsub/sub cmd/pubsub/pubsub cmd/statestore
 
 .PHONY: build build-linux go-mod go-check clean docker-build docker-push
 

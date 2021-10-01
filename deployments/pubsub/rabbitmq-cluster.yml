@@ -2,3 +2,27 @@ apiVersion: rabbitmq.com/v1beta1
 kind: RabbitmqCluster
 metadata:
   name: dapr-demo
+spec:
+  replicas: 1
+  image: rabbitmq:3.9.7
+  persistence:
+    storageClassName: standard
+    storage: 1Gi
+  rabbitmq:
+    additionalPlugins:
+      - rabbitmq_prometheus
+      - rabbitmq_shovel
+      - rabbitmq_shovel_management
+    additionalConfig: |
+      log.console.level = info
+      channel_max = 1700
+      default_user = guest
+      default_pass = guest
+      default_user_tags.administrator = true
+  resources:
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    limits:
+      cpu: 500m
+      memory: 900Mi

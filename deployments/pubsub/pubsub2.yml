@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pubsub
+  labels:
+    app: pubsub-pubsub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pubsub-pubsub
+  template:
+    metadata:
+      labels:
+        app: pubsub-pubsub
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "pubsub"
+        dapr.io/app-port: "8080"
+        dapr.io/log-level: "debug"
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "8181"
+    spec:
+      containers:
+      - name: pub
+        image: dapr-demo:0.1
+        imagePullPolicy: Never
+        command: ['/usr/local/bin/pub']
+      - name: sub
+        image: dapr-demo:0.1
+        imagePullPolicy: Never
+        command: ['/usr/local/bin/sub']
+        ports:
+        - name: dapr
+          containerPort: 8080
+        - name: prometheus
+          containerPort: 8181

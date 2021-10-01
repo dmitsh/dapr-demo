@@ -3,7 +3,7 @@ module github.com/dmitsh/dapr-demo
 go 1.17
 
 require (
-	github.com/dapr/go-sdk v1.2.0
+	github.com/dapr/go-sdk v1.2.1-0.20211007171857-9fceff83a1d5
 	github.com/oklog/run v1.1.0
 	github.com/prometheus/client_golang v1.11.0
 )

@@ -1,7 +1,8 @@
 package pubsub
 
 const (
-	PubSub    = "pubsub"
-	TopicRed  = "red"
-	TopicBlue = "blue"
+	PubSub     = "pubsub"
+	TopicRed   = "red"
+	TopicBlue  = "blue"
+	TopicGreen = "green"
 )
