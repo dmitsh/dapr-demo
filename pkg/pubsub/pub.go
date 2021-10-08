@@ -2,6 +2,7 @@ package pubsub
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -15,12 +16,12 @@ var pub_total = promauto.NewCounterVec(
 		Name: "pub_total",
 		Help: "Total number of requests.",
 	},
-	[]string{"topic", "error"})
+	[]string{"pubsub", "topic", "error"})
 
-func PublishHandler(ctx context.Context, client dapr.Client, topic string) (execute func() error, interrupt func(error)) {
+func PublishHandler(ctx context.Context, client dapr.Client, topic string, cfg *Config) (execute func() error, interrupt func(error)) {
 	ctx, cancel := context.WithCancel(ctx)
 	return func() error {
-			return publish(ctx, client, topic)
+			return publish(ctx, client, topic, cfg)
 		},
 		func(err error) {
 			cancel()
@@ -28,23 +29,27 @@ func PublishHandler(ctx context.Context, client dapr.Client, topic string) (exec
 		}
 }
 
-func publish(ctx context.Context, client dapr.Client, topic string) error {
-	ticker := time.NewTicker(500 * time.Millisecond)
+func publish(ctx context.Context, client dapr.Client, topic string, cfg *Config) error {
+	ticker := time.NewTicker(cfg.pubInterval)
 	defer ticker.Stop()
-
+	var cnt int64
 	for {
 		select {
 		case <-ctx.Done():
 			log.Printf("<PUB> Topic %s done", topic)
 			return nil
 		case <-ticker.C:
-			//log.Printf("<PUB> Publish %s", topic)
-			var msg string
-			if err := client.PublishEvent(ctx, PubSub, topic, []byte(topic)); err != nil {
-				log.Printf("<PUB> Error topic %s: %v", topic, err)
-				msg = err.Error()
+			cnt++
+			data := fmt.Sprintf("%s-%s-%s-%d", cfg.pubsub, topic, cfg.podName, cnt)
+			if cfg.debug {
+				log.Printf("<PUB> Publish %s", data)
 			}
-			pub_total.WithLabelValues(topic, msg).Inc()
+			var errMsg string
+			if err := client.PublishEvent(ctx, cfg.pubsub, topic, []byte(data)); err != nil {
+				log.Printf("<PUB> Error topic %s: %v", topic, err)
+				errMsg = err.Error()
+			}
+			pub_total.WithLabelValues(cfg.pubsub, topic, errMsg).Inc()
 		}
 	}
 }

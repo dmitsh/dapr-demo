@@ -6,10 +6,12 @@ spec:
   type: pubsub.rabbitmq
   version: v1
   metadata:
+  - name: consumerID
+    value: "testConsumer"
   - name: host
     value: "amqp://<USERNAME>:<PASSWORD>@dapr-demo.default.svc.cluster.local:5672"
   - name: durable
-    value: "false"
+    value: "true"
   - name: deletedWhenUnused
     value: "false"
   - name: autoAck

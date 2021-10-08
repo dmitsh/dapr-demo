@@ -1,0 +1,28 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: dapr-demo
+spec:
+  replicas: 1
+  image: rabbitmq:3.9.7
+  persistence:
+    storageClassName: default
+    storage: 1Gi
+  service:
+    type: LoadBalancer
+  rabbitmq:
+    additionalPlugins:
+      - rabbitmq_prometheus
+      - rabbitmq_shovel
+      - rabbitmq_shovel_management
+    additionalConfig: |
+      log.console.level = debug
+      default_user = guest
+      default_pass = guest
+  resources:
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    limits:
+      cpu: 500m
+      memory: 900Mi

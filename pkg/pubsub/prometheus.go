@@ -14,11 +14,12 @@ type PrometheusSvc struct {
 	srv *http.Server
 }
 
-func NewPrometheusService(ctx context.Context, addr string) *PrometheusSvc {
+func NewPrometheusService(ctx context.Context, cfg *Config) *PrometheusSvc {
+	log.Printf("NewPrometheusService address %s", cfg.promAddr)
 	return &PrometheusSvc{
 		ctx: ctx,
 		srv: &http.Server{
-			Addr:    addr,
+			Addr:    cfg.promAddr,
 			Handler: promhttp.Handler(),
 		},
 	}

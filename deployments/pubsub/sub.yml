@@ -16,10 +16,10 @@ spec:
       annotations:
         dapr.io/enabled: "true"
         dapr.io/app-id: "sub"
-        dapr.io/app-port: "8080"
+        dapr.io/app-port: "8181"
         prometheus.io/scrape: "true"
         prometheus.io/path: "/metrics"
-        prometheus.io/port: "8181"
+        prometheus.io/port: "8282"
     spec:
       containers:
       - name: sub
@@ -28,6 +28,6 @@ spec:
         command: ['/usr/local/bin/sub']
         ports:
         - name: dapr
-          containerPort: 8080
-        - name: prometheus
           containerPort: 8181
+        - name: prometheus
+          containerPort: 8282

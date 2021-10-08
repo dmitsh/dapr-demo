@@ -16,14 +16,19 @@ echo $DIR
 echo "Checking kubectl"
 which kubectl
 
-echo "Deploying rabbitmq cluster operator"
-kubectl apply -f https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml
-POD=$(kubectl -n rabbitmq-system get pod -l app.kubernetes.io/component=rabbitmq-operator -o jsonpath={.items..metadata.name})
-kubectl wait -n rabbitmq-system --for=condition=Ready pod/$POD
+#echo "Deploying rabbitmq cluster operator"
+#kubectl apply -f https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml
+#POD=$(kubectl -n rabbitmq-system get pod -l app.kubernetes.io/component=rabbitmq-operator -o jsonpath={.items..metadata.name})
+#kubectl wait -n rabbitmq-system --for=condition=Ready pod/$POD
 
 echo "Deploying rabbitmq cluster"
-kubectl apply -f ../deployments/pubsub/rabbitmq-cluster.yml
-kubectl wait --for=condition=Ready pod/dapr-demo-server-0
+#kubectl apply -f ../deployments/pubsub/rabbitmq-cluster.yml
+#kubectl wait --for=condition=Ready pod/dapr-demo-server-0
+
+helm repo add azure-marketplace https://marketplace.azurecr.io/helm/v1/repo
+helm install dapr-demo azure-marketplace/rabbitmq --set auth.username=guest --set auth.password=guest --set image.debug=true --set persistence.size=1Gi
+
+#helm install dapr-demo azure-marketplace/redis --set auth.password=guest
 
 echo "Deploying Dapr rabbitmq pubsub component"
 

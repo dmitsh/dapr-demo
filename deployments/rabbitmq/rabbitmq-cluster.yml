@@ -14,7 +14,7 @@ spec:
       - rabbitmq_shovel
       - rabbitmq_shovel_management
     additionalConfig: |
-      log.console.level = info
+      log.console.level = debug
       channel_max = 1700
       default_user = guest
       default_pass = guest
