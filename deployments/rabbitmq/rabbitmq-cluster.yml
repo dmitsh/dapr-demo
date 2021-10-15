@@ -7,7 +7,7 @@ spec:
   image: rabbitmq:3.9.7
   persistence:
     storageClassName: standard
-    storage: 1Gi
+    storage: 4Gi
   rabbitmq:
     additionalPlugins:
       - rabbitmq_prometheus

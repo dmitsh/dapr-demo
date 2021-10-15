@@ -1,0 +1,149 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "panels": [
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "8.1.7",
+      "targets": [
+        {
+          "exemplar": true,
+          "expr": "sum(pub_total{app=\"pubsub-app1\",error=\"\",error!~\".+50001\"})",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "pub-app1",
+          "refId": "A"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(pub_total{app=\"pubsub-app2\",error=\"\",error!~\".+50001\"})",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "pub-app2",
+          "refId": "B"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(sub_total{app=\"pubsub-app1\"})",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "sub-app1",
+          "refId": "C"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(sub_total{app=\"pubsub-app2\"})",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "sub-app2",
+          "refId": "D"
+        },
+        {
+          "exemplar": true,
+          "expr": "sum(pub_total{app=\"pubsub-app1\",error=\"\",error!~\".+50001\"}) + sum(pub_total{app=\"pubsub-app2\",error=\"\",error!~\".+50001\"}) - sum(sub_total{app=\"pubsub-app1\"})",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "diff-app1",
+          "refId": "E"
+        },
+        {
+          "exemplar": true,
+          "expr": "2*sum(pub_total{app=\"pubsub-app2\",error=\"\",error!~\".+50001\"}) - sum(sub_total{app=\"pubsub-app2\"})",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "diff-app2",
+          "refId": "F"
+        },
+        {
+          "exemplar": true,
+          "expr": "sub_total{miss!=\"\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "errors",
+          "refId": "G"
+        }
+      ],
+      "title": "PubSub",
+      "type": "gauge"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 30,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "RMQ counts",
+  "uid": "LT7zWgOnk",
+  "version": 12
+}

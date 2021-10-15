@@ -7,7 +7,7 @@ spec:
   image: rabbitmq:3.9.7
   persistence:
     storageClassName: default
-    storage: 1Gi
+    storage: 4Gi
   service:
     type: LoadBalancer
   rabbitmq:
