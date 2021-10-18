@@ -71,51 +71,27 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum(pub_total{app=\"pubsub-app1\",error=\"\",error!~\".+50001\"})",
+          "expr": "sum(pub_total{error=\"\",error!~\".+50001\"})",
           "instant": false,
           "interval": "",
-          "legendFormat": "pub-app1",
+          "legendFormat": "pub",
           "refId": "A"
         },
         {
           "exemplar": true,
-          "expr": "sum(pub_total{app=\"pubsub-app2\",error=\"\",error!~\".+50001\"})",
+          "expr": "sum(sub_total)",
           "hide": false,
           "interval": "",
-          "legendFormat": "pub-app2",
+          "legendFormat": "sub",
           "refId": "B"
         },
         {
           "exemplar": true,
-          "expr": "sum(sub_total{app=\"pubsub-app1\"})",
+          "expr": "sum(pub_total{error=\"\",error!~\".+50001\"}) - sum(sub_total)",
           "hide": false,
           "interval": "",
-          "legendFormat": "sub-app1",
+          "legendFormat": "diff",
           "refId": "C"
-        },
-        {
-          "exemplar": true,
-          "expr": "sum(sub_total{app=\"pubsub-app2\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "sub-app2",
-          "refId": "D"
-        },
-        {
-          "exemplar": true,
-          "expr": "sum(pub_total{app=\"pubsub-app1\",error=\"\",error!~\".+50001\"}) + sum(pub_total{app=\"pubsub-app2\",error=\"\",error!~\".+50001\"}) - sum(sub_total{app=\"pubsub-app1\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "diff-app1",
-          "refId": "E"
-        },
-        {
-          "exemplar": true,
-          "expr": "2*sum(pub_total{app=\"pubsub-app2\",error=\"\",error!~\".+50001\"}) - sum(sub_total{app=\"pubsub-app2\"})",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "diff-app2",
-          "refId": "F"
         },
         {
           "exemplar": true,
@@ -126,7 +102,7 @@
           "refId": "G"
         }
       ],
-      "title": "PubSub - Distinct Consumer ID",
+      "title": "PubSub - Shared Consumer ID",
       "type": "gauge"
     }
   ],
@@ -143,7 +119,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "PubSub Distinct Consumer ID",
+  "title": "PubSub Shared Consumer ID",
   "uid": "LT7zWgOnk",
-  "version": 12
+  "version": 14
 }

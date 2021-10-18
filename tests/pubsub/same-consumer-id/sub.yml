@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sub
+  labels:
+    app: sub-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sub-app
+  template:
+    metadata:
+      labels:
+        app: sub-app
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "sub"
+        dapr.io/app-port: "8181"
+        dapr.io/log-level: "debug"
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "8282"
+    spec:
+      containers:
+      - name: app
+        image: docker.io/dmitsh/dapr-demo:0.1
+        imagePullPolicy: Always
+        command: ['/usr/local/bin/sub']
+        args: ['-p', 'pubsub', '-c', 'demo']
+        ports:
+        - name: dapr
+          containerPort: 8181
+        - name: prometheus
+          containerPort: 8282
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name

@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pub
+  labels:
+    app: pub-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pub-app
+  template:
+    metadata:
+      labels:
+        app: pub-app
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "pub"
+        dapr.io/log-level: "debug"
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "8282"
+    spec:
+      containers:
+      - name: app
+        image: docker.io/dmitsh/dapr-demo:0.1
+        imagePullPolicy: Always
+        command: ['/usr/local/bin/pub']
+        args: ['-p', 'pubsub', '-t', '5s']
+        ports:
+        - name: prometheus
+          containerPort: 8282
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
