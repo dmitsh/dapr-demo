@@ -11,6 +11,7 @@ import (
 	"os"
 
 	dapr "github.com/dapr/go-sdk/client"
+	jsoniter "github.com/json-iterator/go"
 )
 
 // QueryResponse is the response object for querying state.
@@ -21,10 +22,10 @@ type QueryResponse struct {
 
 // QueryResult is an object representing a single entry in query result.
 type QueryResult struct {
-	Key   string  `json:"key"`
-	Data  []byte  `json:"data"`
-	ETag  *string `json:"etag,omitempty"`
-	Error string  `json:"error,omitempty"`
+	Key   string              `json:"key"`
+	Data  jsoniter.RawMessage `json:"data"`
+	ETag  *string             `json:"etag,omitempty"`
+	Error string              `json:"error,omitempty"`
 }
 
 func main() {
@@ -110,19 +111,15 @@ func run(client dapr.Client, port, store, op, param string) error {
 			return err
 		}
 		var qr QueryResponse
-		err = json.Unmarshal(body, &qr)
+		err = jsoniter.Unmarshal(body, &qr)
 		if err != nil {
 			return err
 		}
 
 		fmt.Println("Result:")
 		for _, item := range qr.Results {
-			val, err := bytes2json(item.Data)
-			if err != nil {
-				return err
-			}
 			fmt.Println("KEY:", item.Key)
-			fmt.Println(val)
+			fmt.Printf("%s\n", string(item.Data))
 		}
 		fmt.Printf("Token: %q\n", qr.Token)
 

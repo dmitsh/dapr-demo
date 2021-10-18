@@ -22,10 +22,6 @@ func main() {
 	}
 	defer client.Close()
 
-	if err = pubsub.WaitForDapr(ctx, cfg); err != nil {
-		log.Fatalf("ERROR: %v", err)
-	}
-
 	sub, err := pubsub.NewSubscriberService(cfg)
 	if err != nil {
 		log.Fatalf("ERROR: %v", err)

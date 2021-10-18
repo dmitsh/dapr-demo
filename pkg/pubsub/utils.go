@@ -1,10 +1,7 @@
 package pubsub
 
 import (
-	"context"
 	"flag"
-	"fmt"
-	"net/http"
 	"os"
 	"time"
 )
@@ -22,7 +19,6 @@ type Config struct {
 	appAddr     string
 	promAddr    string
 	pubInterval time.Duration
-	healthz     string
 	debug       bool
 }
 
@@ -35,12 +31,12 @@ func ProcessCommandLine() *Config {
 	flag.StringVar(&cfg.appAddr, "a", ":8181", "application service address")
 	flag.StringVar(&cfg.promAddr, "m", ":8282", "prometheus service address")
 	flag.DurationVar(&cfg.pubInterval, "t", time.Second, "publishing time interval")
-	flag.StringVar(&cfg.healthz, "h", "", "health probe endpoint URL")
 	flag.BoolVar(&cfg.debug, "d", false, "debug flag")
 	flag.Parse()
 	return cfg
 }
 
+/*
 func WaitForDapr(ctx context.Context, cfg *Config) error {
 	if len(cfg.healthz) == 0 {
 		return nil
@@ -69,3 +65,4 @@ func WaitForDapr(ctx context.Context, cfg *Config) error {
 		}
 	}
 }
+*/
