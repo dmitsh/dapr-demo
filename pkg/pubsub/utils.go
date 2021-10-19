@@ -14,7 +14,6 @@ const (
 
 type Config struct {
 	pubsub      string
-	consumerID  string
 	podName     string
 	appAddr     string
 	promAddr    string
@@ -27,9 +26,8 @@ func ProcessCommandLine() *Config {
 		podName: os.Getenv("POD_NAME"),
 	}
 	flag.StringVar(&cfg.pubsub, "p", "pubsub", "Dapr pubsub component name")
-	flag.StringVar(&cfg.consumerID, "c", "", "consumer ID")
-	flag.StringVar(&cfg.appAddr, "a", ":8181", "application service address")
-	flag.StringVar(&cfg.promAddr, "m", ":8282", "prometheus service address")
+	flag.StringVar(&cfg.appAddr, "a", ":6100", "application service address")
+	flag.StringVar(&cfg.promAddr, "m", "", "prometheus service address")
 	flag.DurationVar(&cfg.pubInterval, "t", time.Second, "publishing time interval")
 	flag.BoolVar(&cfg.debug, "d", false, "debug flag")
 	flag.Parse()

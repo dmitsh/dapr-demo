@@ -16,23 +16,23 @@ spec:
       annotations:
         dapr.io/enabled: "true"
         dapr.io/app-id: "sub"
-        dapr.io/app-port: "8181"
+        dapr.io/app-port: "6100"
         dapr.io/log-level: "debug"
         prometheus.io/scrape: "true"
         prometheus.io/path: "/metrics"
-        prometheus.io/port: "8282"
+        prometheus.io/port: "9091"
     spec:
       containers:
       - name: app
         image: docker.io/dmitsh/dapr-demo:0.1
         imagePullPolicy: Always
         command: ['/usr/local/bin/sub']
-        args: ['-p', 'pubsub', '-c', 'demo']
+        args: ['-p', 'pubsub', '-m', ':9091']
         ports:
         - name: dapr
-          containerPort: 8181
+          containerPort: 6100
         - name: prometheus
-          containerPort: 8282
+          containerPort: 9091
         env:
         - name: POD_NAME
           valueFrom:

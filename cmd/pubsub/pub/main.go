@@ -22,8 +22,6 @@ func main() {
 	}
 	defer client.Close()
 
-	prom := pubsub.NewPrometheusService(ctx, cfg)
-
 	var g run.Group
 	// Signal handler
 	g.Add(run.SignalHandler(ctx, os.Interrupt, syscall.SIGTERM))
@@ -34,7 +32,9 @@ func main() {
 	// Publish green
 	g.Add(pubsub.PublishHandler(ctx, client, pubsub.TopicGreen, cfg))
 	// Prometheus service
-	g.Add(prom.Start, prom.Stop)
+	if prom := pubsub.NewPrometheusService(ctx, cfg); prom != nil {
+		g.Add(prom.Start, prom.Stop)
+	}
 
 	if err := g.Run(); err != nil {
 		log.Fatalf("ERROR: %v", err)

@@ -32,6 +32,7 @@ func PublishHandler(ctx context.Context, client dapr.Client, topic string, cfg *
 func publish(ctx context.Context, client dapr.Client, topic string, cfg *Config) error {
 	ticker := time.NewTicker(cfg.pubInterval)
 	defer ticker.Stop()
+	prom := len(cfg.promAddr) != 0
 	var cnt int64
 	for {
 		select {
@@ -49,7 +50,9 @@ func publish(ctx context.Context, client dapr.Client, topic string, cfg *Config)
 				log.Printf("<PUB> Error topic %s: %v", topic, err)
 				errMsg = err.Error()
 			}
-			pub_total.WithLabelValues(cfg.pubsub, topic, errMsg).Inc()
+			if prom {
+				pub_total.WithLabelValues(cfg.pubsub, topic, errMsg).Inc()
+			}
 		}
 	}
 }

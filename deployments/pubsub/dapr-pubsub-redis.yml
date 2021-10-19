@@ -9,9 +9,9 @@ spec:
   - name: redisHost
     value: dapr-demo-headless.default.svc.cluster.local:6379
   - name: redisPassword
-    value: "guest"
+    value: guest
   - name: consumerID
-    value: "testConsumer"
+    value: testConsumer
   - name: processingTimeout
     value: 5s
   - name: redeliverInterval

@@ -25,6 +25,7 @@ var (
 type Subscriber struct {
 	common.Service
 	debug bool
+	prom  bool
 }
 
 func NewSubscriberService(cfg *Config) (common.Service, error) {
@@ -32,6 +33,7 @@ func NewSubscriberService(cfg *Config) (common.Service, error) {
 	s := &Subscriber{
 		Service: daprd.NewService(cfg.appAddr),
 		debug:   cfg.debug,
+		prom:    len(cfg.promAddr) != 0,
 	}
 
 	for _, topic := range []string{TopicRed, TopicBlue, TopicGreen} {
@@ -39,16 +41,11 @@ func NewSubscriberService(cfg *Config) (common.Service, error) {
 			PubsubName: cfg.pubsub,
 			Topic:      topic,
 			Route:      "/" + topic,
-			Metadata:   map[string]string{},
-		}
-		if len(cfg.consumerID) != 0 {
-			sub.Metadata["consumerID"] = cfg.consumerID
 		}
 		if err := s.AddTopicEventHandler(sub, s.eventHandler); err != nil {
 			return nil, err
 		}
 	}
-
 	return s, nil
 }
 
@@ -61,6 +58,8 @@ func (s *Subscriber) eventHandler(ctx context.Context, e *common.TopicEvent) (re
 		log.Printf("<SUB> ERROR in topic %s : %v", e.Topic, e.Data)
 		miss = e.Data.(string)
 	}
-	sub_total.WithLabelValues(e.PubsubName, e.Topic, miss).Inc()
+	if s.prom {
+		sub_total.WithLabelValues(e.PubsubName, e.Topic, miss).Inc()
+	}
 	return false, nil
 }

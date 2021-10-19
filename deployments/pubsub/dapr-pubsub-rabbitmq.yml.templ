@@ -7,22 +7,22 @@ spec:
   version: v1
   metadata:
   - name: consumerID
-    value: "testConsumer"
+    value: testConsumer
   - name: host
     value: "amqp://<USERNAME>:<PASSWORD>@dapr-demo.default.svc.cluster.local:5672"
   - name: durable
-    value: "true"
+    value: true
   - name: deletedWhenUnused
-    value: "false"
+    value: false
   - name: autoAck
-    value: "false"
+    value: false
   - name: deliveryMode
-    value: "0"
+    value: 0
   - name: requeueInFailure
-    value: "true"
+    value: true
   - name: prefetchCount
-    value: "0"
+    value: 0
   - name: reconnectWait
-    value: "0"
+    value: 0
   - name: concurrencyMode
     value: single

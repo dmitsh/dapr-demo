@@ -15,6 +15,10 @@ type PrometheusSvc struct {
 }
 
 func NewPrometheusService(ctx context.Context, cfg *Config) *PrometheusSvc {
+	if len(cfg.promAddr) == 0 {
+		log.Printf("Skip Prometheus")
+		return nil
+	}
 	log.Printf("NewPrometheusService address %s", cfg.promAddr)
 	return &PrometheusSvc{
 		ctx: ctx,
