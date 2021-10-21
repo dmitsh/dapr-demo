@@ -25,7 +25,7 @@ spec:
         image: docker.io/dmitsh/dapr-demo:0.1
         imagePullPolicy: Always
         command: ['/usr/local/bin/pub']
-        args: ['-m', ':9091']
+        args: ['-t', 'red', '-t', 'green', '-t', 'blue', '-m', '9091']
         ports:
         - name: prometheus
           containerPort: 9091

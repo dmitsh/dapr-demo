@@ -14,14 +14,18 @@ var ()
 
 func main() {
 	log.Printf("Starting subscriber on DAPR_GRPC_PORT %s", os.Getenv("DAPR_GRPC_PORT"))
-	cfg := pubsub.ProcessCommandLine()
-	ctx := context.Background()
+
+	cfg, err := pubsub.ProcessCommandLine()
+	if err != nil {
+		pubsub.Exit(err)
+	}
 
 	sub, err := pubsub.NewSubscriberService(cfg)
 	if err != nil {
-		log.Fatalf("ERROR: %v", err)
+		pubsub.Exit(err)
 	}
 
+	ctx := context.Background()
 	var g run.Group
 	// Signal handler
 	g.Add(run.SignalHandler(ctx, os.Interrupt, syscall.SIGTERM))
@@ -39,6 +43,6 @@ func main() {
 	}
 
 	if err := g.Run(); err != nil {
-		log.Fatalf("ERROR: %v", err)
+		pubsub.Exit(err)
 	}
 }

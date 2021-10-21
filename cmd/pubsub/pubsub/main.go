@@ -13,20 +13,24 @@ import (
 
 func main() {
 	log.Printf("Starting publisher/subscriber on DAPR_GRPC_PORT %s", os.Getenv("DAPR_GRPC_PORT"))
-	cfg := pubsub.ProcessCommandLine()
-	ctx := context.Background()
+
+	cfg, err := pubsub.ProcessCommandLine()
+	if err != nil {
+		pubsub.Exit(err)
+	}
 
 	client, err := dapr.NewClient()
 	if err != nil {
-		panic(err)
+		pubsub.Exit(err)
 	}
 	defer client.Close()
 
 	sub, err := pubsub.NewSubscriberService(cfg)
 	if err != nil {
-		log.Fatalf("ERROR: %v", err)
+		pubsub.Exit(err)
 	}
 
+	ctx := context.Background()
 	var g run.Group
 	// Signal handler
 	g.Add(run.SignalHandler(ctx, os.Interrupt, syscall.SIGTERM))
@@ -41,14 +45,12 @@ func main() {
 	if prom := pubsub.NewPrometheusService(ctx, cfg); prom != nil {
 		g.Add(prom.Start, prom.Stop)
 	}
-	// Publish red
-	g.Add(pubsub.PublishHandler(ctx, client, pubsub.TopicRed, cfg))
-	// Publish blue
-	g.Add(pubsub.PublishHandler(ctx, client, pubsub.TopicBlue, cfg))
-	// Publish green
-	g.Add(pubsub.PublishHandler(ctx, client, pubsub.TopicGreen, cfg))
+	// Publish topics
+	for _, topic := range cfg.Topics() {
+		g.Add(pubsub.PublishHandler(ctx, client, topic, cfg))
+	}
 
 	if err := g.Run(); err != nil {
-		log.Fatalf("ERROR: %v", err)
+		pubsub.Exit(err)
 	}
 }

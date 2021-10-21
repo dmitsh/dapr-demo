@@ -16,28 +16,31 @@ spec:
       annotations:
         dapr.io/enabled: "true"
         dapr.io/app-id: "pubsub"
-        dapr.io/app-port: "8181"
+        dapr.io/app-port: "6100"
         dapr.io/log-level: "debug"
         prometheus.io/scrape: "true"
         prometheus.io/path: "/metrics"
-        prometheus.io/port: "8282"
     spec:
       containers:
       - name: pub
-        image: dapr-demo:0.1
-        imagePullPolicy: Never
+        image: docker.io/dmitsh/dapr-demo:0.1
+        imagePullPolicy: IfNotPresent
         command: ['/usr/local/bin/pub']
+        args: ['-t', 'red', '-t', 'green', '-t', 'blue', '-m', '9091']
         env:
         - name: POD_NAME
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
       - name: sub
-        image: dapr-demo:0.1
-        imagePullPolicy: Never
+        image: docker.io/dmitsh/dapr-demo:0.1
+        imagePullPolicy: IfNotPresent
         command: ['/usr/local/bin/sub']
+        args: ['-t', 'red', '-t', 'green', '-t', 'blue', '-m', '9092']
         ports:
         - name: dapr
-          containerPort: 8181
-        - name: prometheus
-          containerPort: 8282
+          containerPort: 6100
+        - name: prom-pub
+          containerPort: 9091
+        - name: prom-sub
+          containerPort: 9092

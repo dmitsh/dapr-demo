@@ -32,7 +32,7 @@ func PublishHandler(ctx context.Context, client dapr.Client, topic string, cfg *
 func publish(ctx context.Context, client dapr.Client, topic string, cfg *Config) error {
 	ticker := time.NewTicker(cfg.pubInterval)
 	defer ticker.Stop()
-	prom := len(cfg.promAddr) != 0
+	prom := cfg.promPort != 0
 	var cnt int64
 	for {
 		select {

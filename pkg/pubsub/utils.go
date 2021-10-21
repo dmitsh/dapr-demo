@@ -1,37 +1,55 @@
 package pubsub
 
 import (
-	"flag"
+	"log"
 	"os"
+	"path/filepath"
 	"time"
-)
 
-const (
-	TopicRed   = "red"
-	TopicBlue  = "blue"
-	TopicGreen = "green"
+	"github.com/pkg/errors"
+	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 type Config struct {
 	pubsub      string
-	podName     string
-	appAddr     string
-	promAddr    string
+	topics      []string
+	appPort     int
+	promPort    int
 	pubInterval time.Duration
+	podName     string
 	debug       bool
 }
 
-func ProcessCommandLine() *Config {
+func (c *Config) Topics() []string {
+	return c.topics
+}
+
+func ProcessCommandLine() (*Config, error) {
 	cfg := &Config{
 		podName: os.Getenv("POD_NAME"),
+		topics:  []string{},
 	}
-	flag.StringVar(&cfg.pubsub, "p", "pubsub", "Dapr pubsub component name")
-	flag.StringVar(&cfg.appAddr, "a", ":6100", "application service address")
-	flag.StringVar(&cfg.promAddr, "m", "", "prometheus service address")
-	flag.DurationVar(&cfg.pubInterval, "t", time.Second, "publishing time interval")
-	flag.BoolVar(&cfg.debug, "d", false, "debug flag")
-	flag.Parse()
-	return cfg
+	a := kingpin.New(filepath.Base(os.Args[0]), "PubSub test app")
+	a.HelpFlag.Short('h')
+	a.Flag("pubsub", "Dapr pubsub component name.").Short('p').Default("pubsub").StringVar(&cfg.pubsub)
+	a.Flag("app.port", "application service address.").Short('a').Default("6100").IntVar(&cfg.appPort)
+	a.Flag("prom.port", "Prometheus service address.").Short('m').Default("0").IntVar(&cfg.promPort)
+	a.Flag("pub.interval", "publishing time interval.").Short('i').Default("1s").DurationVar(&cfg.pubInterval)
+	a.Flag("topic", "topic name (repetitive)").Short('t').Required().StringsVar(&cfg.topics)
+	a.Flag("debug", "debug flag.").Short('d').Default("false").BoolVar(&cfg.debug)
+
+	_, err := a.Parse(os.Args[1:])
+	if err != nil {
+		a.Usage(os.Args[1:])
+		return nil, errors.Wrapf(err, "Error parsing commandline arguments")
+	}
+
+	return cfg, nil
+}
+
+func Exit(err error) {
+	log.Printf("Error: %s", err.Error())
+	os.Exit(1)
 }
 
 /*

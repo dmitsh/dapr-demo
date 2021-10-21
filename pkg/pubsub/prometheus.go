@@ -2,6 +2,7 @@ package pubsub
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -15,15 +16,15 @@ type PrometheusSvc struct {
 }
 
 func NewPrometheusService(ctx context.Context, cfg *Config) *PrometheusSvc {
-	if len(cfg.promAddr) == 0 {
+	if cfg.promPort == 0 {
 		log.Printf("Skip Prometheus")
 		return nil
 	}
-	log.Printf("NewPrometheusService address %s", cfg.promAddr)
+	log.Printf("NewPrometheusService port %d", cfg.promPort)
 	return &PrometheusSvc{
 		ctx: ctx,
 		srv: &http.Server{
-			Addr:    cfg.promAddr,
+			Addr:    fmt.Sprintf(":%d", cfg.promPort),
 			Handler: promhttp.Handler(),
 		},
 	}

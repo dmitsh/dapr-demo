@@ -29,14 +29,14 @@ type Subscriber struct {
 }
 
 func NewSubscriberService(cfg *Config) (common.Service, error) {
-	log.Printf("NewSubscriberService address %s", cfg.appAddr)
+	log.Printf("NewSubscriberService port %d", cfg.appPort)
 	s := &Subscriber{
-		Service: daprd.NewService(cfg.appAddr),
+		Service: daprd.NewService(fmt.Sprintf(":%d", cfg.appPort)),
 		debug:   cfg.debug,
-		prom:    len(cfg.promAddr) != 0,
+		prom:    cfg.promPort != 0,
 	}
 
-	for _, topic := range []string{TopicRed, TopicBlue, TopicGreen} {
+	for _, topic := range cfg.topics {
 		sub := &common.Subscription{
 			PubsubName: cfg.pubsub,
 			Topic:      topic,

@@ -27,7 +27,7 @@ spec:
         image: docker.io/dmitsh/dapr-demo:0.1
         imagePullPolicy: IfNotPresent
         command: ['/usr/local/bin/pubsub']
-        args: ['-p', 'pubsub2', '-m', ':9091', '-t', '5s']
+        args: ['-p', 'pubsub2', '-t', 'red', '-t', 'green', '-t', 'blue', '-m', '9091', '-i', '5s']
         ports:
         - name: dapr
           containerPort: 6100
