@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -9,10 +10,10 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"syscall"
 
-	"github.com/dapr/components-contrib/state"
 	dapr "github.com/dapr/go-sdk/client"
-	jsoniter "github.com/json-iterator/go"
+	"github.com/oklog/run"
 )
 
 func main() {
@@ -21,7 +22,7 @@ func main() {
 	)
 	flag.StringVar(&store, "s", "statestore", "statestore name")
 	flag.StringVar(&port, "p", "3500", "dapr port")
-	flag.StringVar(&op, "o", "", "operation (set/get/query)")
+	flag.StringVar(&op, "o", "", "operation (set/get/query/srv)")
 	flag.StringVar(&param, "i", "", "operation input parameter")
 	flag.Parse()
 
@@ -32,12 +33,12 @@ func main() {
 	}
 	defer client.Close()
 
-	if err = run(client, port, store, op, param); err != nil {
+	if err = start(client, port, store, op, param); err != nil {
 		panic(err)
 	}
 }
 
-func run(client dapr.Client, port, store, op, param string) error {
+func start(client dapr.Client, port, store, op, param string) error {
 	switch op {
 
 	case "set":
@@ -97,18 +98,12 @@ func run(client dapr.Client, port, store, op, param string) error {
 		if err != nil {
 			return err
 		}
-		var qr state.QueryResponse
-		err = jsoniter.Unmarshal(body, &qr)
-		if err != nil {
-			return err
-		}
+		fmt.Println(string(body))
 
-		fmt.Println("Result:")
-		for _, item := range qr.Results {
-			fmt.Println("KEY:", item.Key)
-			fmt.Printf("%s\n", string(item.Data))
-		}
-		fmt.Printf("Token: %q\n", qr.Token)
+	case "srv":
+		var g run.Group
+		g.Add(run.SignalHandler(context.Background(), os.Interrupt, syscall.SIGTERM))
+		return g.Run()
 
 	default:
 		return fmt.Errorf("unsupported operation %q", op)
