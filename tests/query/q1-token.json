@@ -1,8 +1,6 @@
 {
-    "query": {
-        "pagination": {
-            "limit": 5,
-            "token": "5"
-        }
+    "pagination": {
+        "limit": 5,
+        "token": "5"
     }
 }

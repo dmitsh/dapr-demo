@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -10,10 +9,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"syscall"
 
 	dapr "github.com/dapr/go-sdk/client"
-	"github.com/oklog/run"
 )
 
 func main() {
@@ -22,7 +19,7 @@ func main() {
 	)
 	flag.StringVar(&store, "s", "statestore", "statestore name")
 	flag.StringVar(&port, "p", "3500", "dapr port")
-	flag.StringVar(&op, "o", "", "operation (set/get/query/srv)")
+	flag.StringVar(&op, "o", "", "operation (set/get/query)")
 	flag.StringVar(&param, "i", "", "operation input parameter")
 	flag.Parse()
 
@@ -88,7 +85,7 @@ func start(client dapr.Client, port, store, op, param string) error {
 			return err
 		}
 
-		resp, err := http.Post(fmt.Sprintf("http://localhost:%s/v1.0/state/%s/query", port, store), "application/json", bytes.NewBuffer(content))
+		resp, err := http.Post(fmt.Sprintf("http://localhost:%s/v1.0-alpha1/state/%s/query", port, store), "application/json", bytes.NewBuffer(content))
 		if err != nil {
 			return err
 		}
@@ -99,11 +96,6 @@ func start(client dapr.Client, port, store, op, param string) error {
 			return err
 		}
 		fmt.Println(string(body))
-
-	case "srv":
-		var g run.Group
-		g.Add(run.SignalHandler(context.Background(), os.Interrupt, syscall.SIGTERM))
-		return g.Run()
 
 	default:
 		return fmt.Errorf("unsupported operation %q", op)

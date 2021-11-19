@@ -1,9 +1,7 @@
 {
-    "query": {
-        "filter": {
-            "EQ": {
-                "value.state": "CA"
-            }
+    "filter": {
+        "EQ": {
+            "value.state": "CA"
         }
     }
 }

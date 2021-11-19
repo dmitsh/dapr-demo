@@ -3,9 +3,8 @@
     "key": "1",
     "value": {
       "person": {
-        "name": "Peter",
         "org": "Dev Ops",
-        "code": 1001
+        "id": 1036
       },
       "city": "Seattle",
       "state": "WA"
@@ -15,9 +14,8 @@
     "key": "2",
     "value": {
       "person": {
-        "name": "Kate",
         "org": "Hardware",
-        "code": 1002
+        "id": 1028
       },
       "city": "Portland",
       "state": "OR"
@@ -27,9 +25,8 @@
     "key": "3",
     "value": {
       "person": {
-        "name": "Nataly",
         "org": "Finance",
-        "code": 1003
+        "id": 1071
       },
       "city": "Sacramento",
       "state": "CA"
@@ -39,9 +36,8 @@
     "key": "4",
     "value": {
       "person": {
-        "name": "John",
         "org": "Dev Ops",
-        "code": 1004
+        "id": 1042
       },
       "city": "Spokane",
       "state": "WA"
@@ -51,9 +47,8 @@
     "key": "5",
     "value": {
       "person": {
-        "name": "Nick",
         "org": "Hardware",
-        "code": 1005
+        "id": 1007
       },
       "city": "Los Angeles",
       "state": "CA"
@@ -63,9 +58,8 @@
     "key": "6",
     "value": {
       "person": {
-        "name": "Jeniffer",
         "org": "Finance",
-        "code": 1006
+        "id": 1094
       },
       "city": "Eugene",
       "state": "OR"
@@ -75,9 +69,8 @@
     "key": "7",
     "value": {
       "person": {
-        "name": "Mike",
         "org": "Dev Ops",
-        "code": 1007
+        "id": 1015
       },
       "city": "San Francisco",
       "state": "CA"
@@ -87,9 +80,8 @@
     "key": "8",
     "value": {
       "person": {
-        "name": "Leo",
         "org": "Hardware",
-        "code": 1008
+        "id": 1077
       },
       "city": "Redmond",
       "state": "WA"
@@ -99,9 +91,8 @@
     "key": "9",
     "value": {
       "person": {
-        "name": "Dave",
         "org": "Finance",
-        "code": 1009
+        "id": 1002
       },
       "city": "San Diego",
       "state": "CA"
@@ -111,9 +102,8 @@
     "key": "10",
     "value": {
       "person": {
-        "name": "Ann",
         "org": "Dev Ops",
-        "code": 1010
+        "id": 1054
       },
       "city": "New York",
       "state": "NY"
