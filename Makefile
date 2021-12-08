@@ -24,7 +24,7 @@ clean:
 	rm -rf ./bin
 
 DOCKER_REPO=docker.io/dmitsh
-DOCKER_IMAGE_VER=0.1
+DOCKER_IMAGE_VER=0.2
 DOCKER_IMAGE=dapr-demo:${DOCKER_IMAGE_VER}
 
 docker-build: build-linux

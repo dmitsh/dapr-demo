@@ -12,7 +12,9 @@ import (
 )
 
 func main() {
-	log.Printf("Starting publisher/subscriber on DAPR_GRPC_PORT %s", os.Getenv("DAPR_GRPC_PORT"))
+	grpcPort := os.Getenv("DAPR_GRPC_PORT")
+	httpPort := os.Getenv("DAPR_HTTP_PORT")
+	log.Printf("Starting publisher/subscriber on gRPC:%s / http:%s", grpcPort, httpPort)
 
 	cfg, err := pubsub.ProcessCommandLine()
 	if err != nil {
@@ -25,12 +27,17 @@ func main() {
 	}
 	defer client.Close()
 
+	ctx := context.Background()
+
+	if err = pubsub.WaitForDapr(ctx, httpPort); err != nil {
+		pubsub.Exit(err)
+	}
+
 	sub, err := pubsub.NewSubscriberService(cfg)
 	if err != nil {
 		pubsub.Exit(err)
 	}
 
-	ctx := context.Background()
 	var g run.Group
 	// Signal handler
 	g.Add(run.SignalHandler(ctx, os.Interrupt, syscall.SIGTERM))

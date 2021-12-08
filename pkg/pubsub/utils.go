@@ -1,7 +1,10 @@
 package pubsub
 
 import (
+	"context"
+	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 	"time"
@@ -50,6 +53,33 @@ func ProcessCommandLine() (*Config, error) {
 func Exit(err error) {
 	log.Printf("Error: %s", err.Error())
 	os.Exit(1)
+}
+
+func WaitForDapr(ctx context.Context, port string) error {
+	url := fmt.Sprintf("http://localhost:%s/v1.0/metadata", port)
+	// wait for up to 30 seconds
+	ctx, cancel := context.WithTimeout(ctx, time.Duration(time.Minute))
+	defer cancel()
+
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			fmt.Printf("probing %s\n", url)
+			if resp, err := http.Get(url); err != nil {
+				fmt.Printf("dapr probing error: %v\n", err)
+			} else {
+				fmt.Printf("dapr probing status %s (%d)\n", resp.Status, resp.StatusCode)
+				if resp.StatusCode == http.StatusOK {
+					return nil
+				}
+			}
+		case <-ctx.Done():
+			return ctx.Err()
+		}
+	}
 }
 
 /*
