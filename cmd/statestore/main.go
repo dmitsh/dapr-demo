@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -13,29 +14,34 @@ import (
 	dapr "github.com/dapr/go-sdk/client"
 )
 
+var (
+	port, store, op, param, protocol string
+)
+
 func main() {
-	var (
-		port, store, op, param string
-	)
+
 	flag.StringVar(&store, "s", "statestore", "statestore name")
 	flag.StringVar(&port, "p", "3500", "dapr port")
 	flag.StringVar(&op, "o", "", "operation (set/get/query)")
 	flag.StringVar(&param, "i", "", "operation input parameter")
+	flag.StringVar(&protocol, "r", "http", "protocol (http/grpc)")
 	flag.Parse()
 
 	// create the client
-	client, err := dapr.NewClientWithPort(port)
+	client, err := dapr.NewClient()
 	if err != nil {
 		panic(err)
 	}
 	defer client.Close()
 
-	if err = start(client, port, store, op, param); err != nil {
+	if err = start(client); err != nil {
 		panic(err)
 	}
 }
 
-func start(client dapr.Client, port, store, op, param string) error {
+func start(client dapr.Client) error {
+	ctx := context.Background()
+
 	switch op {
 
 	case "set":
@@ -61,22 +67,29 @@ func start(client dapr.Client, port, store, op, param string) error {
 	case "get":
 		fmt.Printf("Get object with key %s from %s\n", param, store)
 
-		resp, err := http.Get(fmt.Sprintf("http://localhost:%s/v1.0/state/%s/%s", port, store, param))
-		if err != nil {
-			return err
-		}
-		defer resp.Body.Close()
+		if protocol == "http" {
+			resp, err := http.Get(fmt.Sprintf("http://localhost:%s/v1.0/state/%s/%s", port, store, param))
+			if err != nil {
+				return err
+			}
+			defer resp.Body.Close()
 
-		data, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return err
+			data, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return err
+			}
+			val, err := bytes2json(data)
+			if err != nil {
+				return err
+			}
+			fmt.Println(val)
+		} else {
+			resp, err := client.GetState(ctx, store, param)
+			if err != nil {
+				return err
+			}
+			fmt.Println("KEY:", resp.Key, "VALUE:", string(resp.Value))
 		}
-		val, err := bytes2json(data)
-		if err != nil {
-			return err
-		}
-		fmt.Println(val)
-
 	case "query":
 		fmt.Printf("Query objects in %s\n", store)
 
@@ -85,17 +98,28 @@ func start(client dapr.Client, port, store, op, param string) error {
 			return err
 		}
 
-		resp, err := http.Post(fmt.Sprintf("http://localhost:%s/v1.0-alpha1/state/%s/query", port, store), "application/json", bytes.NewBuffer(content))
-		if err != nil {
-			return err
-		}
-		defer resp.Body.Close()
+		if protocol == "http" {
+			resp, err := http.Post(fmt.Sprintf("http://localhost:%s/v1.0-alpha1/state/%s/query", port, store), "application/json", bytes.NewBuffer(content))
+			if err != nil {
+				return err
+			}
+			defer resp.Body.Close()
 
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return err
+			body, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return err
+			}
+			fmt.Println(string(body))
+		} else {
+			resp, err := client.QueryStateAlpha1(ctx, store, string(content), nil)
+			if err != nil {
+				return err
+			}
+			fmt.Printf("Received %d results\n", len(resp.Results))
+			for _, item := range resp.Results {
+				fmt.Printf("Key: %s Value: %s\n", item.Key, string(item.Value))
+			}
 		}
-		fmt.Println(string(body))
 
 	default:
 		return fmt.Errorf("unsupported operation %q", op)
