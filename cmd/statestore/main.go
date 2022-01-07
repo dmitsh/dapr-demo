@@ -119,6 +119,7 @@ func start(client dapr.Client) error {
 			for _, item := range resp.Results {
 				fmt.Printf("Key: %s Value: %s\n", item.Key, string(item.Value))
 			}
+			fmt.Printf("Token: %s\n", resp.Token)
 		}
 
 	default:
