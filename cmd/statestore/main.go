@@ -16,6 +16,7 @@ import (
 
 var (
 	port, store, op, param, protocol string
+	isJson                           bool
 )
 
 func main() {
@@ -25,6 +26,7 @@ func main() {
 	flag.StringVar(&op, "o", "", "operation (set/get/query)")
 	flag.StringVar(&param, "i", "", "operation input parameter")
 	flag.StringVar(&protocol, "r", "http", "protocol (http/grpc)")
+	flag.BoolVar(&isJson, "j", false, "json format")
 	flag.Parse()
 
 	// create the client
@@ -52,7 +54,11 @@ func start(client dapr.Client) error {
 			return fmt.Errorf("failed to read input file: %v", err)
 		}
 
-		resp, err := http.Post(fmt.Sprintf("http://localhost:%s/v1.0/state/%s", port, store), "application/json", bytes.NewBuffer(content))
+		url := fmt.Sprintf("http://localhost:%s/v1.0/state/%s", port, store)
+		if isJson {
+			url += "?metadata.contentType=application/json"
+		}
+		resp, err := http.Post(url, "application/json", bytes.NewBuffer(content))
 		if err != nil {
 			return fmt.Errorf("failed in http.Post: %v", err)
 		}
@@ -68,7 +74,11 @@ func start(client dapr.Client) error {
 		fmt.Printf("Get object with key %s from %s\n", param, store)
 
 		if protocol == "http" {
-			resp, err := http.Get(fmt.Sprintf("http://localhost:%s/v1.0/state/%s/%s", port, store, param))
+			url := fmt.Sprintf("http://localhost:%s/v1.0/state/%s/%s", port, store, param)
+			if isJson {
+				url += "?metadata.contentType=application/json"
+			}
+			resp, err := http.Get(url)
 			if err != nil {
 				return err
 			}
@@ -90,6 +100,7 @@ func start(client dapr.Client) error {
 			}
 			fmt.Println("KEY:", resp.Key, "VALUE:", string(resp.Value))
 		}
+
 	case "query":
 		fmt.Printf("Query objects in %s\n", store)
 
@@ -99,7 +110,11 @@ func start(client dapr.Client) error {
 		}
 
 		if protocol == "http" {
-			resp, err := http.Post(fmt.Sprintf("http://localhost:%s/v1.0-alpha1/state/%s/query", port, store), "application/json", bytes.NewBuffer(content))
+			url := fmt.Sprintf("http://localhost:%s/v1.0-alpha1/state/%s/query?metadata.query-index=userIndx", port, store)
+			if isJson {
+				url += "&metadata.contentType=application/json"
+			}
+			resp, err := http.Post(url, "application/json", bytes.NewBuffer(content))
 			if err != nil {
 				return err
 			}
@@ -111,7 +126,7 @@ func start(client dapr.Client) error {
 			}
 			fmt.Println(string(body))
 		} else {
-			resp, err := client.QueryStateAlpha1(ctx, store, string(content), nil)
+			resp, err := client.QueryStateAlpha1(ctx, store, string(content), map[string]string{"query-index": "userIndx"})
 			if err != nil {
 				return err
 			}

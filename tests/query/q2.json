@@ -1,7 +1,5 @@
 {
     "filter": {
-        "EQ": {
-            "value.state": "CA"
-        }
+        "EQ": { ".state": "CA" }
     }
 }

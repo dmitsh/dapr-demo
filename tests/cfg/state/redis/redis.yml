@@ -10,3 +10,5 @@ spec:
     value: localhost:6378
   - name: redisPassword
     value: ""
+  - name: querySchemasPath
+    value: "tests/query/redis/schemas.json"

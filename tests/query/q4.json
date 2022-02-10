@@ -18,11 +18,14 @@
     },
     "sort": [
         {
+            "key": ".state",
+            "order": "DESC"
+        },
+        {
             "key": ".person.id"
         }
     ],
     "page": {
-        "limit": 3,
-        "token": "3"
+        "limit": 3
     }
 }
