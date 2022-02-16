@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: statestoredemo
+  labels:
+    app: statestoredemo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: statestoredemo
+  template:
+    metadata:
+      labels:
+        app: statestoredemo
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "statestoredemo"
+    spec:
+      containers:
+      - name: state
+        image: docker.io/dmitsh/dapr-demo:0.1
+        imagePullPolicy: Always
+        command: ['sh']
+        args: ["-c", "while :; do echo wait; sleep 2; done"]

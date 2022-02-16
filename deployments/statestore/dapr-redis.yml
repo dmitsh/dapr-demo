@@ -7,7 +7,7 @@ spec:
   version: v1
   metadata:
   - name: redisHost
-    value: localhost:6378
+    value: dapr-redis-headless.dapr-tests.svc.cluster.local:6379
   - name: redisPassword
     value: ""
   - name: queryIndexes
@@ -18,19 +18,27 @@ spec:
           "indexes": [
             {
               "key": "person.org",
-              "type": "TEXT"
+              "alias": "person_org",
+              "type": "TEXT",
+              "sortable": true
             },
             {
               "key": "person.id",
-              "type": "NUMERIC"
+              "alias": "person_id",
+              "type": "NUMERIC",
+              "sortable": true
             },
             {
               "key": "city",
-              "type": "TEXT"
+              "alias": "city",
+              "type": "TEXT",
+              "sortable": true
             },
             {
               "key": "state",
-              "type": "TEXT"
+              "alias": "state",
+              "type": "TEXT",
+              "sortable": true
             }
           ]
         }

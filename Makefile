@@ -23,8 +23,14 @@ go-check:
 clean:
 	rm -rf ./bin
 
+start-redis:
+	docker run -it --rm -p 6378:6379 --name rediq redislabs/rejson:latest
+
+start-mongodb:
+	docker run -it --rm -p 27017:27017 --name mongodb mongo:latest
+
 DOCKER_REPO=docker.io/dmitsh
-DOCKER_IMAGE_VER=0.2
+DOCKER_IMAGE_VER=0.1
 DOCKER_IMAGE=dapr-demo:${DOCKER_IMAGE_VER}
 
 docker-build: build-linux

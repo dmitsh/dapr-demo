@@ -94,7 +94,11 @@ func start(client dapr.Client) error {
 			}
 			fmt.Println(val)
 		} else {
-			resp, err := client.GetState(ctx, store, param)
+			var meta map[string]string
+			if isJson {
+				meta = map[string]string{"contentType": "application/json"}
+			}
+			resp, err := client.GetState(ctx, store, param, meta)
 			if err != nil {
 				return err
 			}
@@ -110,9 +114,9 @@ func start(client dapr.Client) error {
 		}
 
 		if protocol == "http" {
-			url := fmt.Sprintf("http://localhost:%s/v1.0-alpha1/state/%s/query?metadata.query-index=userIndx", port, store)
+			url := fmt.Sprintf("http://localhost:%s/v1.0-alpha1/state/%s/query", port, store)
 			if isJson {
-				url += "&metadata.contentType=application/json"
+				url += "?metadata.queryIndexName=userIndx&metadata.contentType=application/json"
 			}
 			resp, err := http.Post(url, "application/json", bytes.NewBuffer(content))
 			if err != nil {
@@ -126,7 +130,11 @@ func start(client dapr.Client) error {
 			}
 			fmt.Println(string(body))
 		} else {
-			resp, err := client.QueryStateAlpha1(ctx, store, string(content), map[string]string{"query-index": "userIndx"})
+			var meta map[string]string
+			if isJson {
+				meta = map[string]string{"contentType": "application/json", "queryIndexName": "userIndx"}
+			}
+			resp, err := client.QueryStateAlpha1(ctx, store, string(content), meta)
 			if err != nil {
 				return err
 			}

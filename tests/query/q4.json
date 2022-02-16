@@ -2,15 +2,15 @@
     "filter": {
         "OR": [
             {
-                "EQ": { ".person.org": "Dev Ops" }
+                "EQ": { "person.org": "Dev Ops" }
             },
             {
                 "AND": [
                     {
-                        "EQ": { ".person.org": "Finance" }
+                        "EQ": { "person.org": "Finance" }
                     },
                     {
-                        "IN": { ".state": ["CA", "WA"] }
+                        "IN": { "state": ["CA", "WA"] }
                     }
                 ]
             }
@@ -18,11 +18,11 @@
     },
     "sort": [
         {
-            "key": ".state",
+            "key": "state",
             "order": "DESC"
         },
         {
-            "key": ".person.id"
+            "key": "person.id"
         }
     ],
     "page": {
